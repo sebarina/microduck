@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OnDeskGen 资产引擎</title>
+<link rel="stylesheet" href="/static/app.css">
+<script type="importmap">
+{ "imports": { "three": "/static/vendor/three/build/three.module.min.js",
+               "three/addons/": "/static/vendor/three/examples/jsm/" } }
+</script>
+</head>
+<body>
+<main>
+  <div class="hero">
+    <div class="kicker lines">ONDESKGEN · 仿真就绪资产引擎</div>
+    <h1><span class="amber">一句话或一张图</span><br>生成 MuJoCo 可用的家具资产</h1>
+    <p>Lux3D 生成与理解 3D · CoACD 碰撞凸包 · 质量与摩擦 · 可动部件 · 资产包 · 训练用静态 MJCF</p>
+  </div>
+
+  <div class="grid2">
+    <section class="card stack" aria-label="生成">
+      <div class="kicker">INPUT · 生成新资产</div>
+      <fieldset>
+        <legend>类别</legend>
+        <div class="seg" id="cat-seg" style="grid-template-columns:repeat(3,1fr)"></div>
+      </fieldset>
+      <fieldset>
+        <legend>输入方式</legend>
+        <div class="seg" role="group" aria-label="输入方式">
+          <button type="button" id="m-text" aria-pressed="true">文本</button>
+          <button type="button" id="m-image" aria-pressed="false">图片（单张或多视角）</button>
+        </div>
+      </fieldset>
+      <div id="text-box">
+        <label class="field" for="desc">描述</label>
+        <textarea id="desc" rows="2" maxlength="200">浅色橡木书桌，右侧带两个抽屉</textarea>
+      </div>
+      <div id="image-box" hidden>
+        <label class="field">图片（1 张 = 单图生成；多张 = 同一物体的不同视角）</label>
+        <div class="imgslots" id="slots"></div>
+      </div>
+      <fieldset>
+        <legend>尺寸（可选，米；不填就用 Lux3D 预测的真实尺寸）</legend>
+        <div class="row" style="flex-wrap:nowrap">
+          <input type="number" id="sw" step="0.05" min="0.2" max="3" placeholder="宽" aria-label="宽">
+          <input type="number" id="sd" step="0.05" min="0.2" max="3" placeholder="深" aria-label="深">
+          <input type="number" id="sh" step="0.05" min="0.2" max="3" placeholder="高" aria-label="高">
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Lux3D 功能</legend>
+        <div class="stack" id="opts" style="margin-top:0"></div>
+      </fieldset>
+      <div class="note warn" id="credit-note"></div>
+      <label class="row small"><input type="checkbox" id="confirm"> 我确认调用 Lux3D（已有同样请求的结果会直接复用，不再花积分）</label>
+      <button type="button" class="btn primary" id="go">生成仿真资产</button>
+      <div id="form-err" class="note bad" hidden></div>
+    </section>
+
+    <section class="card stack" aria-labelledby="run-title">
+      <div class="kicker">PIPELINE · 引擎进度</div>
+      <div class="row" style="justify-content:space-between">
+        <div><h2 id="run-title" style="font-size:19px">还没有运行</h2><span class="muted small" id="run-sub">每一步的 Lux3D 任务都会归档，可追溯</span></div>
+        <button type="button" class="btn" id="stop" hidden>停止</button>
+      </div>
+      <ol class="stages" id="steps"></ol>
+      <div class="figs" id="thumbs"></div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">LOG · 实时日志</div>
+        <pre class="log" id="log"></pre>
+      </div>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:24px" id="library">
+    <div class="row" style="justify-content:space-between">
+      <div><div class="kicker">LIBRARY · 资产库</div><h2 style="font-size:20px;margin-top:6px">已生成的仿真就绪资产</h2></div>
+      <div class="row"><span class="muted small" id="sel-n">已选 0 个</span>
+        <button type="button" class="btn" id="pack-btn" disabled>打包下载资产包</button></div>
+    </div>
+    <div id="pack-result" style="margin-top:10px"></div>
+    <div class="assets" id="gallery" style="margin-top:16px"></div>
+  </section>
+
+  <section class="card" style="margin-top:24px" id="detail" hidden></section>
+</main>
+<script type="module" src="/static/assets.js"></script>
+</body>
+</html>

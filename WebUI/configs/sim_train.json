@@ -1,0 +1,131 @@
+{
+  "_doc": "Text of the sim-training tab (/train). Optional measured data goes under media/sim_train/ (checks/<name>.txt, slots/<label>/slot.json).",
+  "training_repo": "microduck_rl",
+  "status": {
+    "level": "in_progress",
+    "title": "训练进行中：还没有一条在家具表面上能走的策略",
+    "text": "资产 → 训练场景 → 云端训练 → 本机回放这条链路已经通了，资产的碰撞和接触物理也都验证过。但目前训练出的表面行走策略都还没有学会走：直线行走的三版（v1–v3）都收敛为站桩，绕圈 c1 的几何算错了，修正后的 c2_geo 还没训练。下面如实列出每一步和每次结果；c2 训出可用的策略后，在本页「策略槽」里加进来即可。"
+  },
+  "tasks": [
+    {
+      "id": "Mjlab-Velocity-Sofa-MicroDuck",
+      "label": "沙发座面直线行走",
+      "note": "官方 velocity 配方 + 沙发场景（v1 / v2_bounded / v3_gait）"
+    },
+    {
+      "id": "Mjlab-Circle-Sofa-MicroDuck",
+      "label": "沙发座面绕圈",
+      "note": "按扫过的圆心角打分，半径 0.08–0.12 m（c1_circle / c2_geo）"
+    }
+  ],
+  "chain": [
+    {
+      "title": "OnDeskGen 资产",
+      "text": "沙发 odg_sofa_concept_a、书桌 odg_desk_multiview_a / odg_desk_drawers_a：Lux3D 生成 → CoACD 凸包 → 质量与摩擦 → 物理检查、物理验证视频、绕行验证"
+    },
+    {
+      "title": "静态 MJCF 导出",
+      "text": "box 变体：无 freejoint、原点在底面中心、名字带资产前缀；和官方机器人场景合并自检通过（D34）"
+    },
+    {
+      "title": "训练场景",
+      "text": "训练工程收进同一份 MJCF：scene_sofa.xml / scene_desk.xml；沙发座面 solref 0.06 模拟泡沫，座面碰撞移到 group 0"
+    },
+    {
+      "title": "mjlab 任务",
+      "text": "61 维观测 / 14 维动作，与官方策略族同一契约，可直接热切换；出生在座面可用区内，掉下座面即终止"
+    },
+    {
+      "title": "魔搭 GPU 训练",
+      "text": "A100 80GB ×1，4096 envs × 4000 iters 约 40–60 分钟；tensorboard 记录"
+    },
+    {
+      "title": "verify / export / probe",
+      "text": "在训练环境里扫指令测实际速度；导出 ONNX（内置观测归一化）；纯 ONNX 测指令敏感性，站桩策略拒绝上传"
+    },
+    {
+      "title": "本机回放（本页）",
+      "text": "官方运行时 + BAM 舵机模型，在同一份家具 MJCF 上跑：地面绕行、沙发座面、桌面"
+    }
+  ],
+  "cloud_stages": [
+    {
+      "cmd": "check",
+      "text": "环境自检 + CPU 上的沙发物理验证（真机模型 + 真沙发：软接触、穿模、接触预算），约 1 分钟"
+    },
+    {
+      "cmd": "smoke",
+      "text": "64 envs × 5 iter，抓配置错误（官方说能抓住约 95%），几分钟"
+    },
+    {
+      "cmd": "full",
+      "text": "全量训练：train <TASK> --env.scene.num-envs 4096 --agent.max_iterations 4000"
+    },
+    {
+      "cmd": "verify",
+      "text": "先溯源（旧配置训的 checkpoint 直接中止），再在训练环境里扫一串指令，测实际车体速度；达不到阈值或掉下座面即判失败"
+    },
+    {
+      "cmd": "export",
+      "text": "最新 checkpoint → policy.onnx，断言 obs[1,61] / actions[1,14]"
+    },
+    {
+      "cmd": "probe",
+      "text": "纯 ONNX：只改观测里的指令槽，看动作变化幅度。官方 walker ≈ 0.91，站桩策略 ≈ 0.08"
+    },
+    {
+      "cmd": "upload",
+      "text": "checkpoint + ONNX → 魔搭模型仓库；上传前再跑一次 probe 作为硬闸门"
+    }
+  ],
+  "history": [
+    {
+      "date": "2026-11-12",
+      "run": "v1（直线行走）",
+      "result": "fail",
+      "summary": "站桩：任何指令下位移 0，躯干高度恒定 115 mm；指令敏感性 0.077（官方 0.914）",
+      "cause": "指令范围窄 + 跟踪奖励高斯太宽：原地不动也能拿到约 87% 的跟踪奖励",
+      "ref": "§8"
+    },
+    {
+      "date": "2026-11-13",
+      "run": "v2_bounded",
+      "result": "fail",
+      "summary": "仍站桩：track 奖励 0.82 恰好等于「站着不动」的理论值，air_time 全程 0",
+      "cause": "直行指令 0.20 m/s 在 0.58 m 的坐垫上 2–3 s 就出界：跟得准 = 掉下去",
+      "ref": "§11、§13"
+    },
+    {
+      "date": "2026-11-13",
+      "run": "v3_gait",
+      "result": "fail",
+      "summary": "指令改为「必须动」、air_time 阈值放宽后仍未产生步态",
+      "cause": "根本约束是几何，不是奖励数值：直线任务在坐垫上无解",
+      "ref": "§13、§14"
+    },
+    {
+      "date": "2026-11-14",
+      "run": "c1_circle（绕圈）",
+      "result": "fail",
+      "summary": "换成绕圈任务；拿回的策略在沙发上 2.5–3 s 内翻倒",
+      "cause": "常量照包围盒写：圆心偏 0.365 m、实际嵌在靠背里，鸭子一直出生在靠背中",
+      "ref": "§14、§16"
+    },
+    {
+      "date": "待训练",
+      "run": "c2_geo（绕圈，几何实测）",
+      "result": "pending",
+      "summary": "圆心、半径按射线实测重算；线性 arc-rate 奖励 + 按行进量门控半径 + 12 s episode",
+      "cause": "配方已写好、本机检查已过，等上机训练",
+      "ref": "§14.11、§16、§17"
+    },
+    {
+      "date": "规划中",
+      "run": "沙发 + 书桌并训",
+      "result": "pending",
+      "summary": "三张表面共用一个绕圈半径范围（最紧的沙发余量 17 mm）；书桌只用 13 个碰撞盒的 multiview 版",
+      "cause": "还差每 env 的表面高度、圆心和脚部接触传感器接线，需上机验证",
+      "ref": "§17"
+    }
+  ]
+}

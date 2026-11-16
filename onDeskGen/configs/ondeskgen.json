@@ -1,0 +1,241 @@
+{
+  "_doc": "OnDeskGen engine configuration . One place for every per-category physical and generation parameter. Frame after normalization: Z up, meters, origin at bottom center, front faces +X; width = Y, depth = X, height = Z. size = default target; size_range = plausible real sizes (Lux3D's ai_predict_size result is kept when every dimension is inside the range, otherwise the mesh is scaled to 'size' along 'scale_by'). mass_kg = reference mass (estimate, uniform solid over the collision hulls); mass_range / floor_friction_range = domain-randomization ranges recorded in the asset pack for training (not applied by the validation). All values are estimates from typical retail furniture unless stated.",
+  "version": "ondeskgen-1.0",
+  "lux3d": {
+    "region": "cn",
+    "version": "G1-Turbo",
+    "face_count": null,
+    "ai_predict_size": true,
+    "enable_pbr": true,
+    "export_formats": [
+      "usdz",
+      "obj_zip",
+      "stl"
+    ],
+    "material_transfer_version": "v3.0-standard",
+    "credit_cap": 1000
+  },
+  "collision": {
+    "method": "coacd",
+    "coacd": {
+      "threshold": 0.05,
+      "max_hulls": 64,
+      "max_hull_vertices": 64,
+      "preprocess_resolution": 50,
+      "resolution": 2000,
+      "mcts_iterations": 150,
+      "max_base_extent": 0.3,
+      "seed": 0
+    }
+  },
+  "physics": {
+    "furniture_friction": [
+      1.0,
+      0.005,
+      0.0001
+    ],
+    "floor_friction": 0.4,
+    "floor_friction_range": [
+      0.3,
+      0.6
+    ],
+    "condim": 3,
+    "solref": [
+      0.02,
+      1.0
+    ],
+    "solimp": [
+      0.9,
+      0.95,
+      0.001,
+      0.5,
+      2.0
+    ]
+  },
+  "categories": {
+    "sofa": {
+      "label": "沙发",
+      "size": {
+        "width": 2.0,
+        "depth": 0.9,
+        "height": 0.85
+      },
+      "size_range": {
+        "width": [
+          1.2,
+          2.6
+        ],
+        "depth": [
+          0.7,
+          1.1
+        ],
+        "height": [
+          0.65,
+          1.05
+        ]
+      },
+      "scale_by": "lux3d",
+      "fallback_scale_by": "width",
+      "front_rule": "low_side",
+      "mass_kg": 35.0,
+      "mass_range": [
+        25.0,
+        50.0
+      ],
+      "text_template": "一张{A}沙发，长约{W}厘米、深约{D}厘米、高约{H}厘米，带左右扶手和靠背，沙发底座直接落地，单个物体，纯色背景",
+      "articulation_prompt": null
+    },
+    "desk": {
+      "label": "书桌",
+      "size": {
+        "width": 1.2,
+        "depth": 0.6,
+        "height": 0.75
+      },
+      "size_range": {
+        "width": [
+          0.8,
+          1.8
+        ],
+        "depth": [
+          0.45,
+          0.85
+        ],
+        "height": [
+          0.65,
+          0.85
+        ]
+      },
+      "scale_by": "lux3d",
+      "fallback_scale_by": "height",
+      "front_rule": "legroom",
+      "mass_kg": 25.0,
+      "mass_range": [
+        15.0,
+        40.0
+      ],
+      "text_template": "一张{A}书桌，宽约{W}厘米、深约{D}厘米、高约{H}厘米，桌面平整，{EXTRA}桌下留空可以放腿，桌腿直接落地，单个物体，纯色背景",
+      "articulation_prompt": "抽屉可以沿前后方向拉出和推回"
+    },
+    "table": {
+      "label": "茶几",
+      "size": {
+        "width": 1.0,
+        "depth": 0.5,
+        "height": 0.42
+      },
+      "size_range": {
+        "width": [
+          0.6,
+          1.4
+        ],
+        "depth": [
+          0.4,
+          0.8
+        ],
+        "height": [
+          0.3,
+          0.55
+        ]
+      },
+      "scale_by": "width",
+      "fallback_scale_by": "width",
+      "front_rule": "none",
+      "mass_kg": 10.0,
+      "mass_range": [
+        6.0,
+        18.0
+      ]
+    },
+    "chair": {
+      "label": "椅子",
+      "size": {
+        "width": 0.5,
+        "depth": 0.5,
+        "height": 0.85
+      },
+      "size_range": {
+        "width": [
+          0.4,
+          0.7
+        ],
+        "depth": [
+          0.4,
+          0.7
+        ],
+        "height": [
+          0.7,
+          1.05
+        ]
+      },
+      "scale_by": "height",
+      "fallback_scale_by": "height",
+      "front_rule": "low_side",
+      "mass_kg": 5.0,
+      "mass_range": [
+        3.0,
+        9.0
+      ]
+    },
+    "cabinet": {
+      "label": "边柜",
+      "size": {
+        "width": 1.6,
+        "depth": 0.45,
+        "height": 0.8
+      },
+      "size_range": {
+        "width": [
+          0.8,
+          2.2
+        ],
+        "depth": [
+          0.3,
+          0.6
+        ],
+        "height": [
+          0.5,
+          1.0
+        ]
+      },
+      "scale_by": "width",
+      "fallback_scale_by": "width",
+      "front_rule": "none",
+      "mass_kg": 30.0,
+      "mass_range": [
+        20.0,
+        45.0
+      ]
+    },
+    "goal": {
+      "label": "球门",
+      "size": {
+        "width": 0.8,
+        "depth": 0.35,
+        "height": 0.4
+      },
+      "size_range": {
+        "width": [
+          0.6,
+          1.2
+        ],
+        "depth": [
+          0.2,
+          0.5
+        ],
+        "height": [
+          0.3,
+          0.7
+        ]
+      },
+      "scale_by": "width",
+      "fallback_scale_by": "width",
+      "front_rule": "high_side",
+      "mass_kg": 3.0,
+      "mass_range": [
+        1.5,
+        5.0
+      ]
+    }
+  }
+}

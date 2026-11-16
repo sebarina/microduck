@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MicroDuck 仿真训练</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<main>
+  <div class="hero">
+    <div class="kicker lines">03 · 仿真训练 · SIM TRAINING</div>
+    <h1><span class="amber">用生成的家具资产</span><br>训练 MicroDuck 在家具表面行走</h1>
+    <p>OnDeskGen 资产 → 静态 MJCF → mjlab 训练场景 → 魔搭 GPU 训练 → 本机仿真回放</p>
+  </div>
+  <div id="status"></div>
+
+  <section class="card" style="margin-top:20px" aria-labelledby="h-chain">
+    <div class="kicker" id="h-chain">PIPELINE · 链路</div>
+    <div class="flow" id="chain" style="margin-top:14px"></div>
+  </section>
+
+  <div class="grid2" style="margin-top:24px">
+    <section class="card stack" aria-labelledby="h-assets">
+      <div class="kicker" id="h-assets">ASSETS · 训练用的资产</div>
+      <p class="muted small">训练工程直接收进资产引擎导出的静态 MJCF（box 碰撞版本），和这里是同一份文件。</p>
+      <div id="assets" class="figs"></div>
+    </section>
+    <section class="card stack" aria-labelledby="h-checks">
+      <div class="kicker" id="h-checks">CHECKS · 训练前的物理检查（本机实跑）</div>
+      <p class="muted small">训练工程自带的两个检查，不需要 GPU，在本机用同一份资产跑：表面几何是否和训练配置一致、机器人能不能真的站在软垫上。</p>
+      <div id="checks" class="stack"></div>
+    </section>
+  </div>
+
+  <div class="grid2" style="margin-top:24px">
+    <section class="card stack" aria-labelledby="h-cloud">
+      <div class="kicker" id="h-cloud">CLOUD · 魔搭 GPU 训练流程</div>
+      <p class="muted small" id="tasks"></p>
+      <table class="t" id="stages"></table>
+      <p class="muted small" id="repo"></p>
+    </section>
+    <section class="card stack" aria-labelledby="h-hist">
+      <div class="kicker" id="h-hist">RUNS · 训练记录</div>
+      <ul class="hist" id="history"></ul>
+    </section>
+  </div>
+
+  <section class="stack" style="margin-top:24px" aria-labelledby="h-slots">
+    <div class="kicker lines" id="h-slots">POLICY SLOTS · 策略在资产上运行（本机仿真）</div>
+    <p class="muted small" style="max-width:900px">每个策略跑同样三项：在沙发、书桌周围的地面上绕行；站上沙发座面后前进、转向；在书桌桌面上做同样的动作。
+      家具用训练时的同一份 MJCF，机器人用官方运行时 + BAM 舵机模型，感知为 oracle（读仿真真值）。
+      结果文件放在 <code>media/sim_train/slots/&lt;名字&gt;/slot.json</code>（附视频）即可显示在这里。</p>
+    <div id="slots" class="stack"></div>
+  </section>
+</main>
+<script type="module" src="/static/train.js"></script>
+</body>
+</html>

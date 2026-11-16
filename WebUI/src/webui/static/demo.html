@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OnDeskGen 演示视频</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<main>
+  <div class="hero">
+    <div class="kicker lines">01 · 整体演示 · OVERVIEW</div>
+    <h1><span class="amber">从一句话、一张图</span><br>到能在仿真里用的家具资产</h1>
+    <p>Lux3D 生成 3D · OnDeskGen 仿真就绪资产 · MuJoCo 物理 · MicroDuck 仿真训练</p>
+  </div>
+  <div class="demo-grid">
+    <section class="card" aria-label="演示视频">
+      <video id="demo" controls playsinline preload="metadata" style="width:100%;display:block;background:#000"></video>
+      <div class="row small muted" style="margin-top:10px" id="vmeta"></div>
+    </section>
+    <section class="card" aria-label="章节">
+      <div class="kicker">CHAPTERS · 章节</div>
+      <ol class="chapters" id="chapters"></ol>
+    </section>
+  </div>
+  <section style="margin-top:28px" aria-label="更多">
+    <div class="kicker lines">MORE · 更多演示</div>
+    <div class="more-grid" style="margin-top:14px">
+      <a class="card more" href="/assets"><b>资产引擎 →</b><span class="muted small">文本或图片生成沙发、书桌，带碰撞代理和物理属性</span></a>
+      <a class="card more" href="/train"><b>仿真训练 →</b><span class="muted small">用这些资产训练 MicroDuck 在家具表面行走：流程与当前结果</span></a>
+    </div>
+  </section>
+</main>
+<script type="module" src="/static/demo.js"></script>
+</body>
+</html>
