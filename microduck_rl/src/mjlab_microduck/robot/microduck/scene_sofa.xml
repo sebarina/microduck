@@ -1,0 +1,99 @@
+<mujoco model="scene_sofa">
+    <!-- Sofa-walking verification scene for duck-sim:
+             DUCK_SIM_SCENE=sofa DUCK_SIM_KEYFRAME=SOFA_STAND scripts/duck-sim
+         Generated from scene_backlash.xml + the ODG concept-a sofa
+         (soft-cushion tuned copy, see scripts/sofa in the RL repo). -->
+
+    <include file="robot_groundcontact_backlash.xml" />
+    <!-- Sofa, rotated -90 deg about z: seat long axis (sofa +y) -> world +x,
+         the direction the duck faces at spawn. Contact model matches training
+         (solref 0.06, friction 1 0.01 0.001, seat geoms group 0). -->
+    <include file="assets/sofa/odg_sofa_concept_a_soft.xml" />
+
+    <visual>
+        <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0" />
+        <rgba haze="0.15 0.25 0.35 1" />
+        <global azimuth="160" elevation="-20" />
+    </visual>
+
+    <asset>
+        <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512"
+            height="3072" />
+        <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4"
+            rgb2="0.1 0.2 0.3"
+            markrgb="0.8 0.8 0.8" width="300" height="300" />
+        <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5"
+            reflectance="0.2" />
+    </asset>
+
+    <worldbody>
+        <light pos="0 0 3.5" dir="0 0 -1" directional="true" />
+        <geom name="floor" size="0 0 0.05" pos="0 0 0" type="plane" material="groundplane" />
+    </worldbody>
+    <keyframe>
+        <!-- Backlash model: every servo joint is followed by its unactuated
+             passive_*_backlash hinge, so in qpos each servo value is trailed
+             by a 0 for the backlash joint (14 extra zeros, nq 21 -> 35).
+             ctrl is unchanged (14 actuators). -->
+        <!-- SOFA_STAND / SOFA_SIT: STAND / SIT poses raised onto the cushion.
+             body_server takes the trunk height (qpos[2]) and the servo joint
+             angles from the keyframe and places the duck at (0, -0.235, z)
+             facing +x -- along the seat long axis, same relative pose as
+             training. Seat top 0.518 + stand 0.12 = 0.638; + sit 0.07 = 0.588.
+
+             WHY y = -0.235 AND NOT y = 0: the sofa body is rotated -90 deg about
+             z, so world y = -sofa_x. The walkable pocket is sofa x in
+             [-0.03, +0.50] (see sofa_constants.py), i.e. world y in [-0.50,
+             +0.03], whose centre is y = -0.235. Spawning at y = 0 puts the
+             duck's right flank 5.8 cm INSIDE the backrest, which is why every
+             duck-sim run before 2026-11-14 toppled at t ~ 2.5 s: it was not
+             falling, it was being extruded out of a wall. -->
+        <key name="SOFA_STAND" qpos="
+        0 -0.235 0.638 1 0 0 0
+
+        0 0 -0.08726646259971647 0 -0.457924 0 -0.004940 0 0.452984 0
+        0.3490658503988659 0 0.3490658503988659 0 0 0 0 0
+        0 0 0.08726646259971647 0 0.457924 0 0.004940 0 -0.452984 0"/>
+        <key name="SOFA_SIT" qpos="
+        0 -0.235 0.588 1 0 0 0
+        0 0 0 0 -0.5236 0 1.0472 0 0 0
+        0.5 0 1.6 0 0 0 0 0
+        0 0 0 0 0.5236 0 -1.0472 0 0 0"/>
+        <key name="INIT" qpos="
+        0 0 0.12 1 0 0 0
+        0 0 0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0
+        0 0 0 0 0 0 0 0 0 0"
+        ctrl="0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+        <!-- STAND2: trunk shifted ~5mm forward (CoM over ankle axis). Leg pitch
+             leaned forward vs old STAND: hip_pitch 30->26.24deg, ankle 30->25.95deg,
+             knee 0->0.28deg. -->
+        <key name="STAND" qpos="
+        0 0 0.12 1 0 0 0
+
+        0 0 -0.08726646259971647 0 -0.457924 0 -0.004940 0 0.452984 0
+        0.3490658503988659 0 0.3490658503988659 0 0 0 0 0
+        0 0 0.08726646259971647 0 0.457924 0 0.004940 0 -0.452984 0"
+         ctrl="
+        0 -0.08726646259971647 -0.457924 -0.004940 0.452984
+        0.3490658503988659 0.3490658503988659 0 0
+        0 0.08726646259971647 0.457924 0.004940 -0.452984"
+        />
+        <key name="SIT" qpos="
+        0 0 0.07 1 0 0 0
+        0 0 0 0 -0.5236 0 1.0472 0 0 0
+        0.5 0 1.6 0 0 0 0 0
+        0 0 0 0 0.5236 0 -1.0472 0 0 0" ctrl="
+        0 0 -0.5236 1.0472 0
+        0.5 1.6 0 0 0
+        0 0.5236 -1.0472 0"/>
+        <key name="FOLD" qpos="
+        0 0 0.07 1 0 0 0
+        0 0 0 0 1.57 0 1.57 0 0 0
+        1 0 1 0 0 0 0 0
+        0 0 0 0 -1.57 0 -1.57 0 0 0" ctrl="
+        0 0 1.57 1.57 0
+        1 1 0 0
+        0 0 -1.57 -1.57 0"/>
+    </keyframe>
+</mujoco>

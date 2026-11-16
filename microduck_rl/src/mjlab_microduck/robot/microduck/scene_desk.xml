@@ -1,0 +1,87 @@
+<mujoco model="scene_desk">
+    <!-- Desk-walking verification scene for duck-sim:
+             DUCK_SIM_SCENE=desk DUCK_SIM_KEYFRAME=DESK_STAND scripts/duck-sim
+         Same robot as scene_sofa.xml (backlash model) + the ODG
+         desk_multiview_a "box" asset, unrotated. Its top is a clean
+         0.59 x 1.21 m plate at z = 0.7566 (measured, see desk_constants.py).
+
+         WHY THE DESK IS INLINED INSTEAD OF <include>d: the robot XML sets
+         compiler meshdir="assets", and MuJoCo resolves an included file's mesh
+         paths against meshdir + the include's own directory, which double-
+         prefixes them (assets/.../assets/desk/visual_mv/...). The sofa worked
+         around this by writing ABSOLUTE mesh paths in odg_sofa_concept_a_soft.xml
+         -- which breaks the moment the repo moves or is shipped in the bundle.
+         Inlining keeps this scene free of absolute paths: mesh paths below are
+         relative to meshdir="assets", i.e. assets/desk/visual_mv/*.obj.
+
+         Contact is left furniture-HARD (solref 0.02) on purpose -- the desk's
+         whole contribution to a mixed training run is a rigid surface. -->
+    <include file="robot_groundcontact_backlash.xml" />
+
+    <visual>
+        <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0" />
+        <rgba haze="0.15 0.25 0.35 1" />
+        <global azimuth="160" elevation="-20" />
+    </visual>
+
+    <asset>
+        <mesh name="odg_desk_multiview_a_vis_0" file="desk/visual_mv/vis_0.obj" inertia="shell" />
+            <material name="odg_desk_multiview_a_mat_0" rgba="0.995388 0.993997 0.997171 1" specular="0.2" shininess="0.2" />
+            <mesh name="odg_desk_multiview_a_vis_1" file="desk/visual_mv/vis_1.obj" inertia="shell" />
+            <material name="odg_desk_multiview_a_mat_1" rgba="0.777459 0.58794 0.40106 1" specular="0.2" shininess="0.2" />
+            <mesh name="odg_desk_multiview_a_vis_2" file="desk/visual_mv/vis_2.obj" inertia="shell" />
+            <material name="odg_desk_multiview_a_mat_2" rgba="0.650528 0.660332 0.666591 1" specular="0.2" shininess="0.2" />
+            <mesh name="odg_desk_multiview_a_vis_3" file="desk/visual_mv/vis_3.obj" inertia="shell" />
+            <material name="odg_desk_multiview_a_mat_3" rgba="0.991556 0.988191 0.991046 1" specular="0.2" shininess="0.2" />
+            <mesh name="odg_desk_multiview_a_vis_4" file="desk/visual_mv/vis_4.obj" inertia="shell" />
+            <material name="odg_desk_multiview_a_mat_4" rgba="0.837192 0.702593 0.582037 1" specular="0.2" shininess="0.2" />
+            <mesh name="odg_desk_multiview_a_vis_5" file="desk/visual_mv/vis_5.obj" inertia="shell" />
+            <material name="odg_desk_multiview_a_mat_5" rgba="0.894408 0.836747 0.788816 1" specular="0.2" shininess="0.2" />
+        <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512"
+            height="3072" />
+        <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4"
+            rgb2="0.1 0.2 0.3"
+            markrgb="0.8 0.8 0.8" width="300" height="300" />
+        <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5"
+            reflectance="0.2" />
+    </asset>
+
+    <worldbody>
+        <body name="odg_desk_multiview_a" pos="0 0 0">
+              <geom name="odg_desk_multiview_a_vis_0" type="mesh" mesh="odg_desk_multiview_a_vis_0" material="odg_desk_multiview_a_mat_0" contype="0" conaffinity="0" group="2" density="0" />
+              <geom name="odg_desk_multiview_a_vis_1" type="mesh" mesh="odg_desk_multiview_a_vis_1" material="odg_desk_multiview_a_mat_1" contype="0" conaffinity="0" group="2" density="0" />
+              <geom name="odg_desk_multiview_a_vis_2" type="mesh" mesh="odg_desk_multiview_a_vis_2" material="odg_desk_multiview_a_mat_2" contype="0" conaffinity="0" group="2" density="0" />
+              <geom name="odg_desk_multiview_a_vis_3" type="mesh" mesh="odg_desk_multiview_a_vis_3" material="odg_desk_multiview_a_mat_3" contype="0" conaffinity="0" group="2" density="0" />
+              <geom name="odg_desk_multiview_a_vis_4" type="mesh" mesh="odg_desk_multiview_a_vis_4" material="odg_desk_multiview_a_mat_4" contype="0" conaffinity="0" group="2" density="0" />
+              <geom name="odg_desk_multiview_a_vis_5" type="mesh" mesh="odg_desk_multiview_a_vis_5" material="odg_desk_multiview_a_mat_5" contype="0" conaffinity="0" group="2" density="0" />
+              <geom name="odg_desk_multiview_a_col_0" type="box" size="0.301252 0.213006 0.133227" pos="0.000251776 0.401142 0.623456" quat="0.000155958 0 0 1" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_1" type="box" size="0.145271 0.104424 0.245114" pos="-0.137439 0.298543 0.245114" quat="5.33768e-09 0 0 1" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_2" type="box" size="0.145244 0.104535 0.245114" pos="-0.137413 0.507502 0.245114" quat="1.65935e-08 0 0 1" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_3" type="box" size="0.145264 0.104535 0.245114" pos="0.153095 0.298433 0.245114" quat="1 0 0 -1.15239e-08" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_4" type="box" size="0.145271 0.104439 0.245114" pos="0.153103 0.507406 0.245114" quat="1 0 0 -1.23679e-08" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_5" type="box" size="0.339642 0.301352 0.0263378" pos="-9.8961e-05 -0.151321 0.730291" quat="0.706999 0 0 -0.707214" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_6" type="box" size="0.33955 0.0258116 0.105182" pos="-0.251717 -0.151321 0.59877" quat="0.707107 0 0 0.707107" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_7" type="box" size="0.301437 0.06164 0.0382827" pos="-4.54545e-05 -0.552512 0.718326" quat="1 0 0 1.28117e-09" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_8" type="box" size="0.0225947 0.035003 0.302092" pos="0.272031 -0.575034 0.378495" quat="0.00810804 -0.0166194 0.999821 -0.00406666" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_9" type="box" size="0.0606745 0.0254329 0.114751" pos="-0.261799 -0.549333 0.565262" quat="0.666079 0 0 -0.745881" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_10" type="box" size="0.254834 0.0349467 0.032596" pos="-0.0389192 -0.577766 0.032596" quat="1 0 0 -6.88949e-09" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_11" type="box" size="0.0421862 0.0354104 0.0384925" pos="0.258101 -0.577918 0.0384925" quat="-1.36041e-09 0 0 1" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+              <geom name="odg_desk_multiview_a_col_12" type="box" size="0.0355086 0.0232009 0.192659" pos="-0.269744 -0.576123 0.257851" quat="0.696625 0 0 -0.717436" contype="1" conaffinity="1" group="3" rgba="0.0 0.9 1.0 0.35" density="0" friction="1 0.005 0.0001" condim="3" solref="0.02 1" solimp="0.9 0.95 0.001 0.5 2" />
+            </body>
+        <light pos="0 0 3.5" dir="0 0 -1" directional="true" />
+        <geom name="floor" size="0 0 0.05" pos="0 0 0" type="plane" material="groundplane" />
+    </worldbody>
+
+    <keyframe>
+        <key name="DESK_STAND" qpos="
+        0 0 0.877 1 0 0 0
+
+        0 0 -0.08726646259971647 0 -0.457924 0 -0.004940 0 0.452984 0
+        0.3490658503988659 0 0.3490658503988659 0 0 0 0 0
+        0 0 0.08726646259971647 0 0.457924 0 0.004940 0 -0.452984 0"/>
+        <!-- Trunk height 0.7566 (top) + 0.1204 (stand) = 0.877. body_server
+             reads qpos[2] and places the duck at (spawn-x, spawn-y, z). No
+             orientation offset is needed here (unlike the sofa): the desk is
+             unrotated and its long axis is already world +y / -y. -->
+    </keyframe>
+</mujoco>
