@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import base64
 import binascii
+import hashlib
 import json
 import mimetypes
 import os
@@ -38,6 +39,7 @@ STATIC = Path(__file__).parent / "static"
 WEBUI_ROOT = Path(os.environ.get("WEBUI_HOME") or Path(__file__).resolve().parents[2]).resolve()
 MEDIA = WEBUI_ROOT / "media"
 SIM_TRAIN = MEDIA / "sim_train"
+VERIFY_REPORTS = MEDIA / "verify_odg6_reports"
 ODG_RUNS = OUTPUTS / "ondeskgen" / "runs"
 TRAIN_EXPORT = OUTPUTS / "train_export" / "ondeskgen_static_v1"
 ODG_FLAGS = {"concept_image": ("--no-concept", False), "four_view": ("--four-view", True),
@@ -288,6 +290,14 @@ def train_info() -> dict:
             x["video_url"] = rel(f.parent / "surface" / x["video"]) if x.get("video") else None
         slots.append(sl)
     out["slots"] = sorted(slots, key=lambda s: (s.get("kind") != "trained", s.get("label", "")))
+    if (VERIFY_REPORTS / "REPORT.md").is_file():
+        policy = VERIFY_REPORTS / "policy.onnx"
+        out["odg_verification"] = {
+            "report_url": rel(VERIFY_REPORTS / "report.html"),
+            "markdown_url": rel(VERIFY_REPORTS / "REPORT.md"),
+            "sha256": hashlib.sha256(policy.read_bytes()).hexdigest() if policy.is_file() else None,
+            "videos": [{"name": p.stem, "url": rel(p)} for p in sorted(VERIFY_REPORTS.glob("*.mp4"))],
+        }
     return out
 
 

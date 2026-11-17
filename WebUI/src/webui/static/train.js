@@ -23,6 +23,31 @@ function slotCard(s) {
     <div class="slot-videos">${vids}</div></section>`;
 }
 
+function verificationCard(v) {
+  const names = {odg_sofa_concept_a: "沙发 concept-a（训练同款）", odg_sofa_text_b: "沙发 text-b",
+    odg_desk_multiview_a: "书桌 multiview-a", odg_desk_drawers_a: "书桌 drawers-a",
+    odg_chair_photo_a: "椅子 photo-a", odg_chair_photo_material_a: "椅子 photo-material-a"};
+  const groups = Object.entries(names).map(([id, label], i) => {
+    const videos = v.videos.filter(x => x.name.startsWith(id + "_")).map(x => {
+      const m = x.name.match(/(ccw|cw)_(\d+\.\d+)$/);
+      const caption = `${x.name.includes("_SOFT_") ? "软垫基线 · " : ""}${m?.[1] === "ccw" ? "逆时针" : "顺时针"} · ω=${m?.[1] === "ccw" ? "+" : "−"}${m?.[2]} rad/s`;
+      return `<figure><video src="${esc(x.url)}" controls muted playsinline preload="none" aria-label="${esc(label + ' · ' + caption)}"></video><figcaption>${esc(caption)}</figcaption></figure>`;
+    }).join("");
+    return `<details ${i === 0 ? "open" : ""}><summary>${esc(label)}</summary><div class="slot-videos">${videos}</div></details>`;
+  }).join("");
+  const matched = v.sha256 === "54b144ffd8da36ccd60160462b6620be8cdc1b61e902205f9b43478e328df42e";
+  return `<section class="card stack" id="odg-verification">
+    <h3 style="margin:0">魔搭 c2_geo · 六物体绕圆行走验证 <span class="badge bad">未通过</span></h3>
+    <p class="small">策略 <code>policy.onnx</code> · run 2026-11-14_23-07-20_c2_geo · 验证日期 2026-11-16<br>
+      <span class="mono muted">SHA256 ${esc(v.sha256 || "本地文件缺失")}</span><br>${matched ? "" : badge(false, "", "本地策略与报告不匹配；以下为历史报告结果")}</p>
+    <div class="note warn"><b>26 组：按指令绕圈 0 · 原地自旋 11 · 翻倒/跌落 12 · 偏离/走出 3</b><br>
+      逆时针指令多表现为反向原地自旋；顺时针 13 组中 10 组翻倒或跌落。训练同款沙发的软垫基线也未按指令绕圈，报告判断表面差异不是主要原因。</div>
+    <p class="muted small">本地 CPU + MuJoCo + BAM M6，50 Hz；六件家具 × 双方向 × 两档角速度，共 24 组，另加 2 组软垫基线。圆周出生、切向朝向，r=0.08 m，ω=±0.5 / ±0.9 rad/s，每组最长 12 秒。此处为绕圆任务验证，与上方官方策略的地面绕行和表面动作检查采用不同协议。</p>
+    <p class="small"><a href="${esc(v.report_url)}" target="_blank" rel="noopener">查看完整验证报告与逐组指标</a> · <a href="${esc(v.markdown_url)}" target="_blank" rel="noopener">原始 Markdown 报告</a></p>
+    ${groups}
+  </section>`;
+}
+
 (async function init() {
   await header("train");
   const d = await api("/api/train");
@@ -47,5 +72,8 @@ function slotCard(s) {
     return `<li><span class="date">${esc(h.date)}</span><div><b>${esc(h.run)}</b> <span class="badge ${cls}">${txt}</span>
       <div class="small" style="margin-top:4px">${esc(h.summary)}</div>
       <div class="muted small">原因 / 下一步：${esc(h.cause)} <span class="mono">${esc(h.ref)}</span></div></div></li>`; }).join("");
-  $("#slots").innerHTML = d.slots.map(slotCard).join("") || '<p class="muted">还没有策略槽结果</p>';
+  const verification = d.odg_verification ? verificationCard(d.odg_verification) : "";
+  const officialIndex = d.slots.findIndex(s => s.label === "official_velstand" || s.policy_file?.endsWith("velstand.onnx"));
+  $("#slots").innerHTML = d.slots.map((s, i) => slotCard(s) + (i === officialIndex ? verification : "")).join("") +
+    (officialIndex < 0 ? verification : "") || '<p class="muted">还没有策略槽结果</p>';
 })();

@@ -7,3 +7,11 @@ media/*
 !media/sim_train/
 media/sim_train/*
 !media/sim_train/.gitkeep
+
+# Published demonstration and policy verification evidence
+!media/demo.mp4
+!media/demo_chapters.json
+!media/verify_odg6_reports/
+!media/sim_train/slots/
+media/sim_train/slots/*
+!media/sim_train/slots/official_velstand/

@@ -36,6 +36,8 @@ uv run ondeskgen-webui            # http://127.0.0.1:8765，--port 可改端口
 | 演示视频 | `media/demo.mp4`，以及可选的章节文件 `media/demo_chapters.json`（格式 `{"duration_s": 237.3, "chapters": [{"t": 6.0, "title": "资产生成", "kicker": "1 / 4", "lines": ["..."]}]}`） |
 | 仿真训练 | 页面文字在 `configs/sim_train.json`；训练用资产来自 OnDeskGen 的 `outputs/train_export/ondeskgen_static_v1/`；可选：训练侧检查输出 `media/sim_train/checks/<名字>.txt`（最后一行是 `exit 0` 表示通过），策略在资产上运行的结果 `media/sim_train/slots/<名字>/slot.json`（附视频） |
 
-`media/` 里的文件不进 git，视频请另行放置。
+`media/` 默认不进 git；本仓库随附演示视频、official_velstand 对照及六物体验证资料。
 
 仿真训练页内置魔搭 Notebook 训练过程演示（约 8 分 4 秒），视频和封面位于 `src/webui/static/media/simulate.mp4`、`simulate-poster.jpg`，随源码一起分发，支持进度拖动和全屏播放。
+
+六物体验证位于 `media/verify_odg6_reports/`：包含原始报告、26 段录像和对应 `policy.onnx`。仿真训练页在 `official_velstand` 下方展示结果；26 组均未实现按指令绕圈。演示视频末页同时说明策略已有行走动作、生成物理资产可用于训练与验证。

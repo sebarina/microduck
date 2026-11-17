@@ -1,0 +1,209 @@
+{
+  "label": "official_velstand",
+  "kind": "reference",
+  "note": "官方步行策略 velstand v8：平地上训练，没有用 OnDeskGen 资产训练，作为对照",
+  "policy_file": "third_party/policies_v8/velstand.onnx",
+  "sha256": "2fc7f8ee6acd7d0d",
+  "task_id": null,
+  "checkpoint": null,
+  "run_path": null,
+  "floor": [
+    {
+      "asset": "odg_sofa_concept_a",
+      "reached": true,
+      "fell": false,
+      "time_s": 39.88,
+      "contact_steps": 0,
+      "min_clearance_m": 0.122,
+      "failure": null,
+      "video": "floor_odg_sofa_concept_a/back_left_to_front_right_seed0.mp4"
+    },
+    {
+      "asset": "odg_desk_multiview_a",
+      "reached": true,
+      "fell": false,
+      "time_s": 29.44,
+      "contact_steps": 0,
+      "min_clearance_m": 0.134,
+      "failure": null,
+      "video": "floor_odg_desk_multiview_a/back_left_to_front_right_seed0.mp4"
+    }
+  ],
+  "surface": [
+    {
+      "surface": "sofa",
+      "label": "沙发座面",
+      "asset": "odg_sofa_concept_a",
+      "surface_top_z": 0.5181,
+      "seconds": 18.0,
+      "fell": false,
+      "fell_off": false,
+      "stayed_on_surface": true,
+      "segments": [
+        {
+          "segment": "站立",
+          "command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": 3.0,
+          "vx": 0.0,
+          "wz": 0.004,
+          "trunk_above_surface_m": [
+            0.115,
+            0.123
+          ]
+        },
+        {
+          "segment": "前进 0.4",
+          "command": [
+            0.4,
+            0.0,
+            0.0
+          ],
+          "seconds": 4.0,
+          "vx": 0.084,
+          "wz": 0.091,
+          "trunk_above_surface_m": [
+            0.11,
+            0.121
+          ]
+        },
+        {
+          "segment": "原地转 0.9",
+          "command": [
+            0.0,
+            0.0,
+            0.9
+          ],
+          "seconds": 4.0,
+          "vx": -0.004,
+          "wz": 1.131,
+          "trunk_above_surface_m": [
+            0.112,
+            0.121
+          ]
+        },
+        {
+          "segment": "边走边转",
+          "command": [
+            0.4,
+            0.0,
+            0.6
+          ],
+          "seconds": 4.0,
+          "vx": 0.052,
+          "wz": 0.428,
+          "trunk_above_surface_m": [
+            0.111,
+            0.123
+          ]
+        },
+        {
+          "segment": "站立",
+          "command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": 3.0,
+          "vx": 0.002,
+          "wz": -0.106,
+          "trunk_above_surface_m": [
+            0.112,
+            0.118
+          ]
+        }
+      ],
+      "walk_speed_mps": 0.068,
+      "turn_rate_rps": 1.131,
+      "video": "sofa.mp4",
+      "moved": true
+    },
+    {
+      "surface": "desk",
+      "label": "书桌桌面",
+      "asset": "odg_desk_multiview_a",
+      "surface_top_z": 0.7566,
+      "seconds": 12.8,
+      "fell": true,
+      "fell_off": false,
+      "stayed_on_surface": false,
+      "segments": [
+        {
+          "segment": "站立",
+          "command": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "seconds": 3.0,
+          "vx": 0.0,
+          "wz": 0.004,
+          "trunk_above_surface_m": [
+            0.115,
+            0.123
+          ]
+        },
+        {
+          "segment": "前进 0.4",
+          "command": [
+            0.4,
+            0.0,
+            0.0
+          ],
+          "seconds": 4.0,
+          "vx": 0.127,
+          "wz": 0.051,
+          "trunk_above_surface_m": [
+            0.112,
+            0.122
+          ]
+        },
+        {
+          "segment": "原地转 0.9",
+          "command": [
+            0.0,
+            0.0,
+            0.9
+          ],
+          "seconds": 4.0,
+          "vx": 0.005,
+          "wz": 1.113,
+          "trunk_above_surface_m": [
+            0.115,
+            0.123
+          ]
+        },
+        {
+          "segment": "边走边转",
+          "command": [
+            0.4,
+            0.0,
+            0.6
+          ],
+          "seconds": 1.84,
+          "vx": 0.044,
+          "wz": 0.465,
+          "trunk_above_surface_m": [
+            0.001,
+            0.123
+          ]
+        }
+      ],
+      "walk_speed_mps": 0.085,
+      "turn_rate_rps": 1.113,
+      "video": "desk.mp4",
+      "moved": true
+    }
+  ],
+  "perception": "oracle (simulator ground truth)",
+  "summary": {
+    "floor_reached": 2,
+    "floor_runs": 2,
+    "surface_stayed": 1,
+    "surface_runs": 2,
+    "surface_moved": 2
+  }
+}
